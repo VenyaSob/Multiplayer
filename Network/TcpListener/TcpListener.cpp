@@ -1,0 +1,73 @@
+
+//////////////////////////////////////////
+// Headers			    				//
+//////////////////////////////////////////
+										//
+#include "../TcpListener/TcpListener.h" //
+										//
+//////////////////////////////////////////
+
+
+namespace net
+{
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Constructor																			    //
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////
+	TcpListener::TcpListener()													   //
+	{
+		addr_in = {};
+	}
+
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Methods																				    //
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////
+	Socket::Status TcpListener::Listen(IpAddress address, UINT16 port)		       //
+	{
+		Close();
+
+		socket_core = socket(AF_INET, SOCK_STREAM, NULL);
+		if (socket_core == INVALID_SOCKET)
+			return Error;
+
+		addr_in = Socket::CreateSockAddrIn(address, port);
+
+		if (bind(socket_core, reinterpret_cast<SOCKADDR*>(&addr_in), sizeof(addr_in)) == SOCKET_ERROR)
+			return Error;
+
+		if (listen(socket_core, SOMAXCONN) == SOCKET_ERROR)
+			return Error;
+
+		return Done;
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////
+	Socket::Status TcpListener::Accept(TcpSocket& socket)						   //
+	{
+		int _size_of_in_addr = sizeof(addr_in);
+		SOCKET _socket_accepted_connection = NULL;
+
+		_socket_accepted_connection = accept(socket_core, reinterpret_cast<SOCKADDR*>(&addr_in), &_size_of_in_addr);
+			
+		if (socket_core != INVALID_SOCKET && _socket_accepted_connection != INVALID_SOCKET)
+			socket.socket_core = _socket_accepted_connection;
+		else 
+			return Error;
+
+		return Done;
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////
+	void TcpListener::Close()													   //
+	{
+		Socket::Close();
+	}
+
+} // namespace net

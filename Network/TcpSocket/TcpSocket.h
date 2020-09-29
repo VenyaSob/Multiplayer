@@ -1,0 +1,55 @@
+
+#ifndef NETWORK_TCP_SOCKET_H
+#define	NETWORK_TCP_SOCKET_H
+
+
+//////////////////////////////////////////
+// Headers			    				//
+//////////////////////////////////////////
+										//
+#include "../Config/Config.h"			//
+#include "../Socket/Socket.h"			//
+#include "../DataPacket/DataPacket.h"	//
+										//
+//////////////////////////////////////////
+
+
+namespace net
+{
+	class TcpSocket: public Socket
+	{
+		private:
+
+			///////////////////////////////////////////////
+			// Friendly class							 //
+			///////////////////////////////////////////////
+
+			friend class TcpListener;
+
+
+		public:
+
+			///////////////////////////////////////////////
+			// Methods									 //
+			///////////////////////////////////////////////
+			
+			Status Connect(const IpAddress address, const UINT16 port);
+
+			void Disconnect();
+
+			Status Send(const DataPacket packet) const;
+
+			Status Receive(DataPacket& packet) const;
+	};
+
+
+	/////////////////////////////////////////////////////////////////////////////////
+	// Definition of the most common name   	           	  	 				   //
+	/////////////////////////////////////////////////////////////////////////////////
+
+	typedef TcpSocket TCP_SOCKET;
+
+} // namespace net
+
+
+#endif // NETWORK_TCPSOCKET_H
